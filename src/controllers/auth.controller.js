@@ -112,7 +112,7 @@ export async function login(req, res) {
     });
 
     res.status(200).json({
-        message: "Logged in successfully  ",
+        message: "Logged in successfully",
         user: {
             username: user.username,
             email: user.email
@@ -210,18 +210,16 @@ export async function logout(req, res) {
     const refreshTokenHash = cypto.createHash('sha256').update(refreshToken).digest('hex');
 
     const session = await sessionModel.findOneAndUpdate(
-        { refreshTokenHash },
-        { revoked: false }
+        { refreshTokenHash, revoked: false },
+        { revoked: true },
+        { new: true }
     );
 
     if (!session) {
         return res.status(404).json({
-            message: "Invalid refresh token"
+            message: "Session not found or already logged out"
         });
     }   
-
-    session.revoked = true;
-    await session.save();   
 
     res.clearCookie('refreshToken');
 
@@ -255,30 +253,46 @@ export async function logoutAll(req, res) {
 } 
 
 export async function verifyEmail(req, res) {
-    const { email, otp } = req.body;
+    try {
+        const { email, otp } = req.body;
 
-    const otpHash = cypto.createHash('sha256').update(otp).digest('hex');
-
-    const otpRecord = await otpModel.findOne({ email, otpHash });
-
-    if (!otpRecord) {
-        return res.status(400).json({
-            message: "Invalid OTP"
-        });
-    }           
-
-    const user = await userModel.findByIdAndUpdate(otpRecord.user, { isVerified: true });
-
-    await otpModel.deleteMany({
-        user: otpRecord.user
-     });
-
-    res.status(200).json({
-        message: "Email verified successfully",
-        user: { 
-            username: user.username,
-            email: user.email,
-            isVerified: user.isVerified
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Email and OTP are required"
+            });
         }
-    }); 
-}     
+
+        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+
+        const otpRecord = await otpModel.findOne({ email, otpHash });
+
+        if (!otpRecord) {
+            return res.status(400).json({
+                message: "Invalid or expired OTP"  // expired hoga toh record hi nahi milega
+            });
+        }
+
+        const user = await userModel.findByIdAndUpdate(
+            otpRecord.user,
+            { isVerified: true },
+            { new: true }   // updated document return karega
+        );
+
+        // us user ke saare OTPs delete karo
+        await otpModel.deleteMany({ user: otpRecord.user });
+
+        res.status(200).json({
+            message: "Email verified successfully",
+            user: { 
+                username: user.username,
+                email: user.email,
+                isVerified: user.isVerified   // ab true aayega
+            }
+        }); 
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}

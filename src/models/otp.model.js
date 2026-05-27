@@ -16,6 +16,9 @@ const otpSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
+// MongoDB automatically delete karega document ko 10 min baad
+otpSchema.index({ createdAt: 1 }, { expireAfterSeconds: 600 });
+
 const otpModel = mongoose.model("otps", otpSchema);
 
 export default otpModel;

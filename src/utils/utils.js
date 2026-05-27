@@ -44,7 +44,7 @@ export function getOtpHtml(otp) {
     <div class="container">
         <h2>Your OTP Code</h2>
         <p class="otp">${otp}</p>
-        <p>>Please use this OTP to verify your email address.</p>
+        <p>Please use this OTP to verify your email address.</p>
         <p>This OTP is valid for 10 minutes. Please do not share it with anyone.</p>
         <p>Thank you for using our service!</p>
     </div>
