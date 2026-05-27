@@ -25,6 +25,8 @@ const sessionSchema = new mongoose.Schema({
     { timestamps: true }
 );
 
+sessionSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 }); // 30 days
+
 const sessionModel = mongoose.model('sessions', sessionSchema); 
 
 export default sessionModel;

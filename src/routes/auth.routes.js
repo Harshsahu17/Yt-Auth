@@ -21,17 +21,17 @@ authRouter.get("/get-me", authController.getMe);
 /**
  * GET /api/auth/refresh-token
  */
-authRouter.get("/refresh-token", authController.refreshToken);
+authRouter.post("/refresh-token", authController.refreshToken);
 
 /**
  * GET /api/auth/logout
  */
-authRouter.get("/logout", authController.logout);
+authRouter.post("/logout", authController.logout);
 
 /**
  * GET /api/auth/logout-all
  */
-authRouter.get("/logout-all", authController.logoutAll);
+authRouter.post("/logout-all", authController.logoutAll);
 
 /**
  * GET /api/auth/verify-email
