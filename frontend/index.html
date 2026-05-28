@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yt-Auth</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- LOGO -->
+  <div class="logo">
+    <div class="logo-mark">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <rect x="4" y="9" width="14" height="10" rx="2" stroke="#0e0e0f" stroke-width="1.8"/>
+        <path d="M7 9V7a4 4 0 0 1 8 0v2" stroke="#0e0e0f" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="11" cy="14" r="1.5" fill="#0e0e0f"/>
+      </svg>
+    </div>
+    <h1>Yt-Auth</h1>
+    <p>Authentication API</p>
+  </div>
+
+  <!-- AUTH CARD (Login / Register) -->
+  <div class="card" id="auth-card">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Login</button>
+      <button class="tab" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="view-login" class="view active">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="harsh@example.com" autocomplete="email">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password">
+      <button class="btn primary" id="btn-login" onclick="doLogin()">Login</button>
+      <div id="login-alert" class="alert"></div>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="view-register" class="view">
+      <label>Username</label>
+      <input type="text" id="reg-username" placeholder="harshsahu" autocomplete="username">
+      <label>Email</label>
+      <input type="email" id="reg-email" placeholder="harsh@example.com" autocomplete="email">
+      <label>Password</label>
+      <input type="password" id="reg-password" placeholder="••••••••" autocomplete="new-password">
+      <button class="btn primary" id="btn-register" onclick="doRegister()">Create account</button>
+      <div id="reg-alert" class="alert"></div>
+    </div>
+  </div>
+
+  <!-- VERIFY CARD -->
+  <div class="card" id="verify-card" style="display:none">
+    <div class="section-head">
+      <h2>Verify your email</h2>
+      <p id="verify-hint">OTP sent to your email</p>
+    </div>
+    <label>OTP Code</label>
+    <input type="text" class="otp" id="otp-input" placeholder="······" maxlength="6" autocomplete="one-time-code">
+    <button class="btn primary" id="btn-verify" onclick="doVerify()">Verify</button>
+    <div id="verify-alert" class="alert"></div>
+    <button class="link-btn" onclick="showAuth()">← Back to login</button>
+  </div>
+
+  <!-- DASHBOARD CARD -->
+  <div class="card" id="dash-card" style="display:none">
+    <div class="user-card">
+      <div class="avatar" id="dash-avatar">H</div>
+      <div class="user-meta">
+        <div class="name" id="dash-username">—</div>
+        <div class="email" id="dash-email">—</div>
+      </div>
+      <span class="verified-badge">✓ verified</span>
+    </div>
+
+    <div class="token-label">
+      <span>
+        Access token
+        <span class="token-status valid" id="token-status">
+          <span class="dot"></span> valid
+        </span>
+      </span>
+      <span class="copy-hint">click to copy</span>
+    </div>
+    <div class="token-box" id="token-box" onclick="copyToken()">—</div>
+
+    <hr class="divider">
+
+    <button class="btn info" id="btn-getme" onclick="doGetMe()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+      </svg>
+      Hit get-me (auto-refresh on expiry)
+    </button>
+
+    <button class="btn" id="btn-refresh" onclick="doManualRefresh()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 8A6 6 0 1 1 8 2"/><polyline points="13 2 14 8 8 8"/>
+      </svg>
+      Manual refresh token
+    </button>
+
+    <button class="btn danger" onclick="doLogout()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 8h8M11 5l3 3-3 3"/><path d="M10 3H4a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h6"/>
+      </svg>
+      Logout this device
+    </button>
+
+    <button class="btn danger" onclick="doLogoutAll()">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="1" y="4" width="9" height="7" rx="1"/><rect x="6" y="1" width="9" height="7" rx="1"/>
+        <path d="M12 11v4M10 13h4"/>
+      </svg>
+      Logout all devices
+    </button>
+
+    <div id="dash-alert" class="alert"></div>
+  </div>
+
+</div>
+<script src="app.js"></script>
+</body>
+</html>

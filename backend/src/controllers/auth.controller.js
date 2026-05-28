@@ -84,10 +84,11 @@ export async function login(req, res) {
             { expiresIn: '15m' }
         );
 
+        // BAAD MEIN (development ke liye)
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
+            secure: false,          // ✅ HTTP localhost ke liye
+            sameSite: 'lax',        // ✅ cross-origin allow karta hai
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -160,10 +161,11 @@ export async function refreshToken(req, res) {
             { expiresIn: '15m' }
         );
 
-        res.cookie('refreshToken', newRefreshToken, {
+        // BAAD MEIN (development ke liye)
+        res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'strict',
+            secure: false,          // ✅ HTTP localhost ke liye
+            sameSite: 'lax',        // ✅ cross-origin allow karta hai
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -199,12 +201,20 @@ export async function logout(req, res) {
             return res.status(404).json({ message: "Session not found or already logged out" });
         }
 
-        res.clearCookie('refreshToken');
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax'
+        });
         res.status(200).json({ message: "Logged out successfully" });
 
     } catch (error) {
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-            res.clearCookie('refreshToken');
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: false,
+                sameSite: 'lax'
+            });
             return res.status(401).json({ message: "Invalid or expired refresh token" });
         }
         res.status(500).json({ message: "Internal server error" });
@@ -223,12 +233,21 @@ export async function logoutAll(req, res) {
 
         await sessionModel.updateMany({ user: decoded.id, revoked: false }, { revoked: true });
 
-        res.clearCookie('refreshToken');
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax'
+        });
+
         res.status(200).json({ message: "Logged out from all sessions successfully" });
 
     } catch (error) {
         if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
-            res.clearCookie('refreshToken');
+            res.clearCookie('refreshToken', {
+                httpOnly: true,
+                secure: false,
+                sameSite: 'lax'
+            });
             return res.status(401).json({ message: "Invalid or expired refresh token" });
         }
         res.status(500).json({ message: "Internal server error" });
