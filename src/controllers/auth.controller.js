@@ -162,7 +162,7 @@ export async function refreshToken(req, res) {
         );
 
         // BAAD MEIN (development ke liye)
-        res.cookie('refreshToken', refreshToken, {
+        res.cookie('refreshToken', newRefreshToken, {
             httpOnly: true,
             secure: false,          // ✅ HTTP localhost ke liye
             sameSite: 'lax',        // ✅ cross-origin allow karta hai
